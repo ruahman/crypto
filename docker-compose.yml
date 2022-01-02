@@ -8,6 +8,9 @@ services:
     image: alpine:3.7
     command: [ "/bin/sh", "-c", "trap : TERM INT; while :; do echo Ready to code and debug like a rockstar!!!; sleep 2073600; done & wait" ]
     links:
+      - c-lightning
+      - lnd
+      - eclair
       - postgres
 
   bitcoind:
@@ -34,7 +37,7 @@ services:
       - "9735"
       - "9835"
     restart: always
-    links:
+    depends_on:
       - bitcoind
 
   lnd:
@@ -48,7 +51,7 @@ services:
       - "9735"
       - "10009"
     restart: always
-    links:
+    depends_on:
       - bitcoind
 
   eclair:
@@ -60,8 +63,12 @@ services:
       - lnnet
     expose:
       - "9735"
+    restart: always
+    depends_on:
+      - bitcoind
 
   postgres:
+    container_name: postgres
     image: postgres:9.6.5
     ports:
       - "39375:5432"
