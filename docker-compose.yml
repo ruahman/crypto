@@ -11,7 +11,8 @@ services:
       - c-lightning
       - lnd
       - eclair
-      - postgres
+      - lnd2
+      # - postgres
 
   bitcoind:
     container_name: bitcoind
@@ -67,13 +68,27 @@ services:
     depends_on:
       - bitcoind
 
-  postgres:
-    container_name: postgres
-    image: postgres:9.6.5
-    ports:
-      - "39375:5432"
+  lnd2:
+    container_name: lnd2
+    build:
+      context: lnd
+    image: crpyto/lnd:latest
+    networks:
+      - lnnet
     expose:
-      - "5432"
+      - "9735"
+      - "10009"
+    restart: always
+    depends_on:
+      - bitcoind
+
+  # postgres:
+  #   container_name: postgres
+  #   image: postgres:9.6.5
+  #   ports:
+  #     - "39375:5432"
+  #   expose:
+  #     - "5432"
 
 
 
